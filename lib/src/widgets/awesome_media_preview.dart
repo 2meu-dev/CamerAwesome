@@ -51,7 +51,7 @@ class AwesomeMediaPreview extends StatelessWidget {
   Widget _buildMedia(MediaCapture? mediaCapture) {
     switch (mediaCapture?.status) {
       case MediaCaptureStatus.capturing:
-        return Center(
+        return progressIndicator ?? Center(
           child: Padding(
             padding: const EdgeInsets.all(8),
             child: Platform.isIOS
