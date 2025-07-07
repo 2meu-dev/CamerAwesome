@@ -11,11 +11,13 @@ import 'package:flutter/material.dart';
 class AwesomeMediaPreview extends StatelessWidget {
   final MediaCapture? mediaCapture;
   final OnMediaTap onMediaTap;
+  final Widget? progressIndicator;
 
   const AwesomeMediaPreview({
     super.key,
     required this.mediaCapture,
     required this.onMediaTap,
+    this.progressIndicator
   });
 
   @override
@@ -83,17 +85,21 @@ class AwesomeMediaPreview extends StatelessWidget {
                       width: 300,
                     );
                   } else {
-                    return Platform.isIOS
-                        ? const CupertinoActivityIndicator(
-                            color: Colors.white,
-                          )
-                        : const Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2.0,
-                            ),
-                          );
+                    if (progressIndicator != null) {
+                      return progressIndicator!;
+                    } else {
+                      return Platform.isIOS
+                          ? const CupertinoActivityIndicator(
+                        color: Colors.white,
+                      )
+                          : const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2.0,
+                        ),
+                      );
+                    }
                   }
                 });
           } else {
