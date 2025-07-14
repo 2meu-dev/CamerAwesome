@@ -17,7 +17,7 @@ class AwesomeMediaPreview extends StatelessWidget {
     super.key,
     required this.mediaCapture,
     required this.onMediaTap,
-    this.progressIndicator
+    this.progressIndicator,
   });
 
   @override
@@ -26,9 +26,7 @@ class AwesomeMediaPreview extends StatelessWidget {
       child: AspectRatio(
         aspectRatio: 1,
         child: AwesomeBouncingWidget(
-          onTap: mediaCapture != null &&
-                  onMediaTap != null &&
-                  mediaCapture?.status == MediaCaptureStatus.success
+          onTap: mediaCapture != null && onMediaTap != null && mediaCapture?.status == MediaCaptureStatus.success
               ? () => onMediaTap!(mediaCapture!)
               : null,
           child: AnimatedContainer(
@@ -43,22 +41,26 @@ class AwesomeMediaPreview extends StatelessWidget {
   Widget _buildMedia(MediaCapture? mediaCapture) {
     switch (mediaCapture?.status) {
       case MediaCaptureStatus.capturing:
-        return progressIndicator ?? Center(
-          child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: Platform.isIOS
-                ? const CupertinoActivityIndicator(
-                    color: Colors.white,
-                  )
-                : const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2.0,
-                    ),
-                  ),
-          ),
-        );
+        if (progressIndicator != null) {
+          return progressIndicator!;
+        } else {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Platform.isIOS
+                  ? const CupertinoActivityIndicator(
+                color: Colors.white,
+              )
+                  : const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2.0,
+                ),
+              ),
+            ),
+          );
+        }
       case MediaCaptureStatus.success:
         if (mediaCapture!.isPicture) {
           if (kIsWeb) {
@@ -66,8 +68,7 @@ class AwesomeMediaPreview extends StatelessWidget {
             return FutureBuilder<Uint8List>(
                 future: mediaCapture.captureRequest.when(
                   single: (single) => single.file!.readAsBytes(),
-                  multiple: (multiple) =>
-                      multiple.fileBySensor.values.first!.readAsBytes(),
+                  multiple: (multiple) => multiple.fileBySensor.values.first!.readAsBytes(),
                 ),
                 builder: (_, snapshot) {
                   if (snapshot.hasData) {
@@ -97,17 +98,13 @@ class AwesomeMediaPreview extends StatelessWidget {
           } else {
             return Image(
               fit: BoxFit.cover,
-              image: ResizeImage(
-                FileImage(
-                  File(
-                    mediaCapture.captureRequest.when(
-                      single: (single) => single.file!.path,
-                      multiple: (multiple) =>
-                          multiple.fileBySensor.values.first!.path,
-                    ),
+              image: FileImage(
+                File(
+                  mediaCapture.captureRequest.when(
+                    single: (single) => single.file!.path,
+                    multiple: (multiple) => multiple.fileBySensor.values.first!.path,
                   ),
                 ),
-                width: 300,
               ),
             );
           }
